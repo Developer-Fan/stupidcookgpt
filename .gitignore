@@ -6,3 +6,10 @@ __pycache__/
 .ipynb_checkpoints
 .vscode/
 .DS_Store
+logs/
+# Ignore model
+
+Model/
+Training/trained_model_small/
+
+Training/help.md
