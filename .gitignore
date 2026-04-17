@@ -9,7 +9,7 @@ __pycache__/
 logs/
 # Ignore model
 
-Model/
+Archived/Model/
 Training/trained_model_small/
 
 Training/help.md
