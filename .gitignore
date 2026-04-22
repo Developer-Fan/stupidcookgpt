@@ -11,5 +11,5 @@ logs/
 
 Archived/Model/
 Training/trained_model_small/
-
+Training/*
 Training/help.md

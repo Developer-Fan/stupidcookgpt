@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
+import json
 import os
 from dataclasses import dataclass, asdict
 
@@ -323,23 +324,29 @@ class miniGPT:
 
     def save(self, output_dir):
         os.makedirs(output_dir, exist_ok=True)
-        torch.save(
-            {
-                "config": asdict(self.model.config),
-                "state_dict": self.model.state_dict(),
-            },
-            os.path.join(output_dir, "model.pt"),
-        )
+        with open(os.path.join(output_dir, "config.json"), "w", encoding="utf-8") as config_file:
+            json.dump(asdict(self.model.config), config_file, indent=2)
+        torch.save(self.model.state_dict(), os.path.join(output_dir, "weights.pt"))
         self.tokenizer.save_pretrained(output_dir)
 
     @classmethod
     def load(cls, model_dir, map_location=None):
         from transformers import AutoTokenizer
 
-        checkpoint = torch.load(os.path.join(model_dir, "model.pt"), map_location=map_location)
-        config = GPTConfig(**checkpoint["config"])
+        config_path = os.path.join(model_dir, "config.json")
+        weights_path = os.path.join(model_dir, "weights.pt")
+
+        if os.path.exists(config_path) and os.path.exists(weights_path):
+            with open(config_path, "r", encoding="utf-8") as config_file:
+                config = GPTConfig(**json.load(config_file))
+            state_dict = torch.load(weights_path, map_location=map_location)
+        else:
+            checkpoint = torch.load(os.path.join(model_dir, "model.pt"), map_location=map_location)
+            config = GPTConfig(**checkpoint["config"])
+            state_dict = checkpoint["state_dict"]
+
         model = GPTModel(config)
-        model.load_state_dict(checkpoint["state_dict"])
+        model.load_state_dict(state_dict)
 
         tokenizer = AutoTokenizer.from_pretrained(model_dir)
         if tokenizer.pad_token_id is None:
