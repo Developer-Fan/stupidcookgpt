@@ -338,15 +338,60 @@ class miniGPT:
 
         if os.path.exists(config_path) and os.path.exists(weights_path):
             with open(config_path, "r", encoding="utf-8") as config_file:
-                config = GPTConfig(**json.load(config_file))
-            state_dict = torch.load(weights_path, map_location=map_location)
+                config_dict = json.load(config_file)
+                # Map HuggingFace field names to our GPTConfig field names
+                filtered_dict = {}
+                if 'vocab_size' in config_dict:
+                    filtered_dict['vocab_size'] = config_dict['vocab_size']
+                if 'n_ctx' in config_dict:
+                    filtered_dict['block_size'] = config_dict['n_ctx']
+                if 'n_layer' in config_dict:
+                    filtered_dict['n_layers'] = config_dict['n_layer']
+                if 'n_embd' in config_dict:
+                    filtered_dict['n_embd'] = config_dict['n_embd']
+                if 'n_head' in config_dict:
+                    filtered_dict['n_heads'] = config_dict['n_head']
+                # Use any available dropout field
+                if 'resid_pdrop' in config_dict:
+                    filtered_dict['dropout'] = config_dict['resid_pdrop']
+                elif 'attn_pdrop' in config_dict:
+                    filtered_dict['dropout'] = config_dict['attn_pdrop']
+                elif 'embd_pdrop' in config_dict:
+                    filtered_dict['dropout'] = config_dict['embd_pdrop']
+            
+            # Load weights - check if it's a full checkpoint or just state_dict
+            loaded = torch.load(weights_path, map_location=map_location)
+            if isinstance(loaded, dict) and "state_dict" in loaded:
+                state_dict = loaded["state_dict"]
+            else:
+                state_dict = loaded
+            
+            # Infer actual dimensions from state_dict to handle config/weight mismatches
+            if "token_emb.weight" in state_dict:
+                actual_embd = state_dict["token_emb.weight"].shape[1]
+                filtered_dict['n_embd'] = actual_embd
+            
+            if "pos_emb.weight" in state_dict:
+                actual_block_size = state_dict["pos_emb.weight"].shape[0]
+                filtered_dict['block_size'] = actual_block_size
+            
+            # Count actual layers from state_dict
+            layer_count = 0
+            for key in state_dict.keys():
+                if key.startswith("blocks."):
+                    layer_num = int(key.split(".")[1])
+                    layer_count = max(layer_count, layer_num + 1)
+            if layer_count > 0:
+                filtered_dict['n_layers'] = layer_count
+            
+            config = GPTConfig(**filtered_dict)
         else:
             checkpoint = torch.load(os.path.join(model_dir, "model.pt"), map_location=map_location)
             config = GPTConfig(**checkpoint["config"])
             state_dict = checkpoint["state_dict"]
 
         model = GPTModel(config)
-        model.load_state_dict(state_dict)
+        model.load_state_dict(state_dict, strict=False)
 
         tokenizer = AutoTokenizer.from_pretrained(model_dir)
         if tokenizer.pad_token_id is None:

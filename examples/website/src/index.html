@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stupidcookgpt home</title>
+    <style>
+        
+        .loading {
+            font-weight: bold;
+            color: #714343;
+        }
+        .input-form {
+            margin: 20px;
+            background-color: #f9d5d3;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .input-form textarea {
+            width: calc(100% - 20px); 
+            height: 100px;
+            margin-top: 10px;
+            max-height: 200px;
+            border-radius: 5px;
+            background-color: #fff1f1;
+            color: #493535;
+            padding: 10px;
+            font-size: 14px;
+            resize: vertical;
+            border: none;
+        }
+        .input-form input[type="submit"] {
+            
+            padding: 10px 20px;
+            background-color: #714343;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-form input[type="submit"]:hover {
+            background-color: #976565;
+        }
+        .clickables {
+            /* center them horizontally */
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .input-form .examples {
+            padding: 10px 20px;
+            background-color: #714343;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-form .examples:hover {
+            background-color: #976565;
+        }
+        .input-form label {
+            font-weight: bold;
+        }
+        .input-form input[type="number"] {
+            width: 80px;
+            margin-left: 10px;
+            border-radius: 5px;
+            background-color: #fff1f1;
+            color: #493535;
+            padding: 5px;
+            border: none;
+        }
+        .input-form .advanced_parameters {
+            margin-top: 10px;
+        }
+        .input-form .advtoggle {
+            font-weight: bold;
+            color: #714343;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        .input-form .advanced_parameters .parameters{
+            display: none;
+        }
+        .loading::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% {
+                content: '';
+            }
+            40% {
+                content: '.';
+            }
+            60% {
+                content: '..';
+            }
+            80%, 100% {
+                content: '...';
+            }
+        }
+        .output {
+            margin: 20px;
+            background-color: #f9d5d3;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 100px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/global.css">
+</head>
+<body>
+    <div class="header">
+        <h1> 🧑‍🍳 🍳 stupidcookgpt</h1>
+        <span class="abs_menu">
+            <a href="/" id="select">Home</a>
+            <a href="/api_query">API usage</a>
+        </span>
+        <p>
+            If you ever find yourself where you don't know what to make, 
+            stupidcookgpt is here to be ur own personal chef!
+            Give it a prompt and see in amazement as it generates your very own perfect recipe!
+        </p>
+        <p class="small">
+            The small print: 90% of the time, it is having a seizure, 9% of the time it is inedible
+            and 1% of the time it works. So keep that in mind when you're thinking of actually making it.
+            pls don't sue me if you get food poisoning from using this.
+        </p>
+    </div>
+
+    
+
+    <div class="input-form">
+        <form method="get">
+            <label for="prompt">What do you want to eat?</label><br>
+            <textarea id="prompt" name="prompt" required></textarea><br>
+            <div class="clickables">
+                <input type="submit" value="Generate Recipe">
+                <button class="examples" type="button">Random Prompt</button>
+            </div>
+            <div class="advanced_parameters">
+                <div class="advtoggle">
+                    Advanced settings ▸
+                </div>
+                <div class="parameters">
+                    <label for="max_length">Max length: (200-500)</label>
+                    <input type="number" id="max_length" name="max_length" min="200" max="500" value="300">
+                    <label for="temperature">Temperature (0-1):</label>
+                    <input type="number" id="temperature" name="temperature" min="0" max="1" step="0.01" value="0.85">
+                    <label for="top_k">Top-k:</label>
+                    <input type="number" id="top_k" name="top_k" min="0" value="50">
+                    <label for="top_p">Top-p:</label>
+                    <input type="number" id="top_p" name="top_p" min="0" max="1" step="0.01" value="0.9">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="output">
+        <h2>Output</h2>
+        <div class="output-content">
+            <p>Enter a prompt and click "Generate Recipe" to see the magic happen!</p>
+        </div>
+    </div>
+    <script>
+        document.querySelector("form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const prompt = document.getElementById("prompt").value;
+            const temperature = parseFloat(document.getElementById("temperature").value);
+            const top_k = parseInt(document.getElementById("top_k").value);
+            const top_p = parseFloat(document.getElementById("top_p").value);
+
+            try {
+                document.querySelector(".output-content").innerHTML = "<p class='loading'>Generating recipe</p>";
+                const response = await fetch(`/generate?prompt=${encodeURIComponent(prompt)}&temperature=${temperature}&top_k=${top_k}&top_p=${top_p}`);
+                const data = await response.json();
+                recipe = data.recipe.replace(/\n/g, "<br>"); // replace newlines with <br> for HTML display
+                document.querySelector(".output-content").innerHTML = `<p><strong>Generated Recipe:</strong></p><p>${recipe}</p>`;
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while generating the recipe.");
+            }
+        });
+
+        document.querySelector(".advtoggle").addEventListener("click", () => {
+            const advSettings = document.querySelector(".parameters");
+            if (advSettings.style.display === "none" || !advSettings.style.display) {
+                advSettings.style.display = "block";
+                document.querySelector(".advtoggle").textContent = "Advanced settings ▾";
+            } else {
+                advSettings.style.display = "none";
+                document.querySelector(".advtoggle").textContent = "Advanced settings ▸";
+            }
+        });
+
+        document.querySelector(".examples").addEventListener("click", () => {
+            const examples = [
+                "recipe for chocolate cake",
+                "chicken and rice salad",
+                "vegetarian pasta recipe",
+                "breakfast ideas with eggs",
+                "Ingredients: \n - 1/2 c. flour"
+            ];
+            const randomExample = examples[Math.floor(Math.random() * examples.length)];
+            document.getElementById("prompt").value = randomExample;
+        });
+    </script>
+</body>
+</html>
