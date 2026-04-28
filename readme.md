@@ -1,7 +1,7 @@
 # ![logo](logo.png)
-[cc-by-4.0](https://img.shields.io/badge/License-CC_BY_4.0-blue)
-[build: passing](https://img.shields.io/badge/build-passing-brightgreen)
-[python: 3.12](https://img.shields.io/badge/python-3.12-blue)
+![cc-by-4.0](https://img.shields.io/badge/License-CC_BY_4.0-blue)
+![build: passing](https://img.shields.io/badge/build-passing-brightgreen)
+![python: 3.12](https://img.shields.io/badge/python-3.12-blue)
 
 A (stupid) cook at your service!
 
