@@ -1,6 +1,4 @@
-# StupidCookGPT
-
-![logo](logo.png)
+# ![logo](logo.png) StupidCookGPT
 
 A (stupid) cook at your service!
 
