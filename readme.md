@@ -1,5 +1,11 @@
 # StupidCookGPT
 
+![logo](logo.png)
+
+A (stupid) cook at your service!
+
+__The small print: don't take it seriously__
+
 This repo contains:
 
 1. A transformer-based, distilgpt2 82 M deep-learning model trained on recipes for recipe generation, your personal (stupid) cook! 
