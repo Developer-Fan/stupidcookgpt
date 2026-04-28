@@ -2,20 +2,69 @@
 
 A (stupid) cook at your service!
 
-__The small print: don't take it seriously__
+<small>*The small print: don't take it seriously*</small>
 
 This repo contains:
 
 1. A transformer-based, distilgpt2 82 M deep-learning model trained on recipes for recipe generation, your personal (stupid) cook! 
-2. Another potentially smarter but smaller model based on my own custom GPT-type architecture (miniGPT) with only 49 to 60 M parameters, trained on the same dataset, a better personal (but still stupid) cook!
+2. Another ~~potentially~~ smarter but smaller model based on my own custom GPT-type architecture (miniGPT) trained on the same dataset, a better personal (but still stupid) cook!
+3. A bunch of better architectures. Notably, I introduce...
+
+## Models
+
+### MiniGPT
+A compact, efficient and powerful transformer-based architecture that is designed to be trained on consumer-based hardware. (verified on an M1 Pro). It is a GPT-type architecture, but minimalistic to be trained on consumer-based hardware.
+
+**Architecture Details:**
+- 12 transformer layers
+- 768-dimensional embeddings
+- 12 attention heads
+- 1024 block size (context window)
+- Classic GPT-2 style causal self-attention
+
+### NanoGPT
+An enhanced version of miniGPT with advanced features for improved training efficiency and performance:
+
+**Architecture Details:**
+- 12 transformer layers
+- 768-dimensional embeddings
+- 12 attention heads
+- 1024 block size (context window)
+- **RoPE (Rotary Position Embedding)** support for better positional encoding (optional)
+- **Gradient checkpointing** for reduced memory usage during training
+- **Model compilation** support via `torch.compile` for optimized inference
+
+### NanoMGPT (Nano-M GPT)
+NanoGPT extended with text-based memory capabilities. The "M" stands for Memory, enabling the model to maintain and retrieve contextual information during generation.
+
+**Architecture Details:**
+- All features of NanoGPT
+- "Inventory"-based memory system that allows consistent memory retrieval
+- SQLite3-based memory persistence
+- Enhanced context awareness through memory integration
+- Intelligent parsing so users don't see the system at all.
+
+## See it in action!
+
+Go to [the examples folder](examples/) to see the models in action.
 
 (To be fair, I don't have a T4 or even a CUDA-capable GPU, so this is the best I can do for now...)
+
+## Training
+
+The models are trained on recipe data using custom training scripts:
+- **Training notebooks:** See `Training/` folder for training examples (gpt2distill.ipynb, minigpt.ipynb, nanogpt.ipynb)
+
+## Usage
+
+Use `call_model.py` to interact with trained models for recipe generation.
 
 **Packages and Acknowledgements:**
 - transformers (from Huggingface)
 - datasets (from Huggingface)
 - corbt/all-recipes for the training dataset.
 - torch, pytorch.
-- also google colab, their cloud platform is super neat.
+- google colab for cloud training platform
+- huggingface spaces for inference platform
 
 *Inspired by: [flax-community/t5-recipe-generation](https://huggingface.co/flax-community/t5-recipe-generation)*
