@@ -1,4 +1,7 @@
 # ![logo](logo.png)
+[cc-by-4.0](https://img.shields.io/badge/License-CC_BY_4.0-blue)
+[build: passing](https://img.shields.io/badge/build-passing-brightgreen)
+[python: 3.12](https://img.shields.io/badge/python-3.12-blue)
 
 A (stupid) cook at your service!
 
@@ -8,14 +11,14 @@ This repo contains:
 
 1. A transformer-based, distilgpt2 82 M deep-learning model trained on recipes for recipe generation, your personal (stupid) cook! 
 2. Another ~~potentially~~ smarter but smaller model based on my own custom GPT-type architecture (miniGPT) trained on the same dataset, a better personal (but still stupid) cook!
-3. A bunch of better architectures. Notably, I introduce...
+3. A bunch of better architectures. As well as training scripts. Notably, I introduce...
 
 ## Models
 
 ### MiniGPT
-A compact, efficient and powerful transformer-based architecture that is designed to be trained on consumer-based hardware. (verified on an M1 Pro). It is a GPT-type architecture, but minimalistic to be trained on consumer-based hardware.
+A compact, efficient and powerful transformer-based architecture that is designed to be trained on consumer-based hardware. (verified on an M1 Pro).
 
-**Architecture Details:**
+**Features:**
 - 12 transformer layers
 - 768-dimensional embeddings
 - 12 attention heads
@@ -25,7 +28,7 @@ A compact, efficient and powerful transformer-based architecture that is designe
 ### NanoGPT
 An enhanced version of miniGPT with advanced features for improved training efficiency and performance:
 
-**Architecture Details:**
+**Features:**
 - 12 transformer layers
 - 768-dimensional embeddings
 - 12 attention heads
@@ -37,7 +40,7 @@ An enhanced version of miniGPT with advanced features for improved training effi
 ### NanoMGPT (Nano-M GPT)
 NanoGPT extended with text-based memory capabilities. The "M" stands for Memory, enabling the model to maintain and retrieve contextual information during generation.
 
-**Architecture Details:**
+**Features:**
 - All features of NanoGPT
 - "Inventory"-based memory system that allows consistent memory retrieval
 - SQLite3-based memory persistence
@@ -58,6 +61,8 @@ The models are trained on recipe data using custom training scripts:
 ## Usage
 
 Use `call_model.py` to interact with trained models for recipe generation.
+
+## Acknowledgements
 
 **Packages and Acknowledgements:**
 - transformers (from Huggingface)
